@@ -1,14 +1,29 @@
 package tec.challenge.bank.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
+import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
+import tec.challenge.bank.repository.CurrentAccountRepository;
+import tec.challenge.bank.repository.SavingAccountRepository;
 
 public class BankService implements IBankService {
+  @Autowired
+  CurrentAccountRepository currentAccountRepository;
+  @Autowired
+  SavingAccountRepository savingAccountRepository;
 
   @Override
-  public void createAccount() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
+  public void createAccount(Record dto) {
+    if (isWhatTypeAccount(dto)) {
+      createCurrentAccount((CreateCurrentAccountDto) dto);
+    } else {
+      createSavingAccount((CreateSavingAccountDto) dto);
+    }
   }
 
   @Override
@@ -75,6 +90,40 @@ public class BankService implements IBankService {
   public void statement() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'statement'");
+  }
+
+  private Boolean isWhatTypeAccount(Record type) {
+    return (type instanceof CreateCurrentAccountDto);
+  }
+
+  private CurrentAccount createCurrentAccount(CreateCurrentAccountDto currentAccount) {
+    var existingCurrentAccount = currentAccountRepository.findByCpf(currentAccount.cpf());
+
+    if (existingCurrentAccount.isPresent()) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Founder already exists");
+    }
+
+    var newCurrentAccount = new CurrentAccount();
+    newCurrentAccount.setCpf(currentAccount.cpf());
+
+    currentAccountRepository.save(newCurrentAccount);
+
+    return newCurrentAccount;
+  }
+
+  private SavingAccount createSavingAccount(CreateSavingAccountDto savingAccount) {
+    var existingSavingAccount = savingAccountRepository.findByCpf(savingAccount.cpf());
+
+    if (existingSavingAccount.isPresent()) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Founder already exists");
+    }
+
+    var newSavingAccount = new SavingAccount();
+    newSavingAccount.setCpf(savingAccount.cpf());
+
+    savingAccountRepository.save(newSavingAccount);
+
+    return newSavingAccount;
   }
 
 }

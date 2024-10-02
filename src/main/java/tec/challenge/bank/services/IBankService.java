@@ -4,7 +4,7 @@ import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
 
 public interface IBankService {
-  public void createAccount();
+  public void createAccount(Record type);
 
   public CurrentAccount consultCurrentAccount(Long id);
 
