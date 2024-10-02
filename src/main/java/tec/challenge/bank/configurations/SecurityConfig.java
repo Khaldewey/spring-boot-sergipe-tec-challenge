@@ -51,8 +51,6 @@ public class SecurityConfig {
     authenticationManagerBuilder
         .authenticationProvider(customAuthenticationProvider())
         .inMemoryAuthentication()
-        .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
-        .and()
         .withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN");
 
     return authenticationManagerBuilder.build();
@@ -61,10 +59,6 @@ public class SecurityConfig {
   @Bean
   public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
     InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-    manager.createUser(User.withUsername("user")
-        .password(passwordEncoder.encode("password"))
-        .roles("USER")
-        .build());
     manager.createUser(User.withUsername("admin")
         .password(passwordEncoder.encode("admin"))
         .roles("ADMIN")
