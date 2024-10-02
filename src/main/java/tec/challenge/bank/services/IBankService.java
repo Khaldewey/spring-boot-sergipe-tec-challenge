@@ -1,14 +1,16 @@
 package tec.challenge.bank.services;
 
+import java.util.Optional;
+
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
 
 public interface IBankService {
   public void createAccount(Record type);
 
-  public CurrentAccount consultCurrentAccount(Long id);
+  public Optional<CurrentAccount> consultCurrentAccount(Long id);
 
-  public SavingAccount consultSavingAccount(Long id);
+  public Optional<SavingAccount> consultSavingAccount(Long id);
 
   public void editAccount(Long id);
 

@@ -1,13 +1,17 @@
 package tec.challenge.bank.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
 import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
+import tec.challenge.bank.models.Bank;
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
+import tec.challenge.bank.repository.BankRepository;
 import tec.challenge.bank.repository.CurrentAccountRepository;
 import tec.challenge.bank.repository.SavingAccountRepository;
 
@@ -16,6 +20,10 @@ public class BankService implements IBankService {
   CurrentAccountRepository currentAccountRepository;
   @Autowired
   SavingAccountRepository savingAccountRepository;
+  @Autowired
+  BankRepository bankRepository;
+
+  private Optional<Bank> bank = bankRepository.findById(1l);
 
   @Override
   public void createAccount(Record dto) {
@@ -27,15 +35,13 @@ public class BankService implements IBankService {
   }
 
   @Override
-  public CurrentAccount consultCurrentAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'consultCurrentAccount'");
+  public Optional<CurrentAccount> consultCurrentAccount(Long id) {
+    return currentAccountRepository.findById(id);
   }
 
   @Override
-  public SavingAccount consultSavingAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'consultSavingAccount'");
+  public Optional<SavingAccount> consultSavingAccount(Long id) {
+    return savingAccountRepository.findById(id);
   }
 
   @Override
@@ -105,7 +111,9 @@ public class BankService implements IBankService {
 
     var newCurrentAccount = new CurrentAccount();
     newCurrentAccount.setCpf(currentAccount.cpf());
-
+    newCurrentAccount.setBank(bank.get());
+    newCurrentAccount.setNameClient(currentAccount.nameClient());
+    newCurrentAccount.setSaldo(currentAccount.saldo());
     currentAccountRepository.save(newCurrentAccount);
 
     return newCurrentAccount;
@@ -120,6 +128,10 @@ public class BankService implements IBankService {
 
     var newSavingAccount = new SavingAccount();
     newSavingAccount.setCpf(savingAccount.cpf());
+    newSavingAccount.setCpf(savingAccount.cpf());
+    newSavingAccount.setBank(bank.get());
+    newSavingAccount.setNameClient(savingAccount.nameClient());
+    newSavingAccount.setSaldo(savingAccount.saldo());
 
     savingAccountRepository.save(newSavingAccount);
 
