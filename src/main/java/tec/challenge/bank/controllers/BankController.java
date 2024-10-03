@@ -1,5 +1,6 @@
 package tec.challenge.bank.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,13 @@ public class BankController {
   private IBankService bankService;
 
   @GetMapping("/dashboard")
-  public String dashboard() {
+  public String dashboard(Model model) {
+    List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
+    List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
+
+    model.addAttribute("currentAccounts", currentAccounts);
+    model.addAttribute("savingAccounts", savingAccounts);
+
     return "dashboard";
   }
 
@@ -31,13 +38,12 @@ public class BankController {
       @RequestParam("saldo") Float saldo,
       @RequestParam("cpf") Long cpf, Model model) {
 
-    // Verifica o tipo de conta e cria o DTO correspondente
     if ("CURRENT".equalsIgnoreCase(accountType)) {
       CreateCurrentAccountDto currentAccountDto = new CreateCurrentAccountDto(nameClient, saldo, cpf);
-      bankService.createAccount(currentAccountDto); // Cria conta corrente
+      bankService.createAccount(currentAccountDto);
     } else if ("SAVING".equalsIgnoreCase(accountType)) {
       CreateSavingAccountDto savingAccountDto = new CreateSavingAccountDto(nameClient, saldo, cpf);
-      bankService.createAccount(savingAccountDto); // Cria conta poupança
+      bankService.createAccount(savingAccountDto);
     } else {
       model.addAttribute("message", "Tipo de conta inválido!");
       return "dashboard";
@@ -58,7 +64,6 @@ public class BankController {
     return "dashboard";
   }
 
-  // Consulta uma conta poupança
   @PostMapping("/dashboard/consult-saving-account")
   public String consultSavingAccount(@RequestParam("accountId") Long accountId, Model model) {
     Optional<SavingAccount> account = bankService.consultSavingAccount(accountId);

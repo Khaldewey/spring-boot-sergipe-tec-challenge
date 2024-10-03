@@ -44,6 +44,66 @@
         <button type="submit">Consultar Conta Poupança</button>
     </form>
 
+    <h2>Listar Contas</h2>
+    <button id="showCurrentAccountsBtn">Ver Contas Correntes</button>
+    <button id="showSavingAccountsBtn">Ver Contas Poupanças</button>
+
+    <div id="currentAccountsTable" style="display:none;">
+        <h3>Contas Correntes</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Cliente</th>
+                    <th>Cpf</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="account : ${currentAccounts}">
+                    <td th:text="${account.id}"></td>
+                    <td th:text="${account.nameClient}"></td>
+                    <td th:text="${account.cpf}"></td>
+                    <td th:text="${account.saldo}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="savingAccountsTable" style="display:none;">
+        <h3>Contas Poupanças</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Cliente</th>
+                    <th>Cpf</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="account : ${savingAccounts}">
+                    <td th:text="${account.id}"></td>
+                    <td th:text="${account.nameClient}"></td>
+                    <td th:text="${account.cpf}"></td>
+                    <td th:text="${account.saldo}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('showCurrentAccountsBtn').onclick = function() {
+            document.getElementById('currentAccountsTable').style.display = 'block';
+            document.getElementById('savingAccountsTable').style.display = 'none';
+        };
+
+        document.getElementById('showSavingAccountsBtn').onclick = function() {
+            document.getElementById('savingAccountsTable').style.display = 'block';
+            document.getElementById('currentAccountsTable').style.display = 'none';
+        };
+    </script>
+
     
     <div th:if="${message}">
         <p th:text="${message}"></p>

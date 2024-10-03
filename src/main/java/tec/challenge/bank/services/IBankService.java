@@ -1,5 +1,6 @@
 package tec.challenge.bank.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +15,10 @@ public interface IBankService {
   public Optional<CurrentAccount> consultCurrentAccount(Long id);
 
   public Optional<SavingAccount> consultSavingAccount(Long id);
+
+  public List<CurrentAccount> getAllCurrentAccounts();
+
+  public List<SavingAccount> getAllSavingAccounts();
 
   public void editAccount(Long id);
 

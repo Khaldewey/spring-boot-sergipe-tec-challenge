@@ -1,5 +1,6 @@
 package tec.challenge.bank.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ public class BankService implements IBankService {
 
   private Optional<Bank> bank;
 
-  // Método para buscar o banco ao inicializar o serviço
   @PostConstruct
   private void init() {
     bank = bankRepository.findById(1L);
@@ -55,6 +55,16 @@ public class BankService implements IBankService {
   @Override
   public Optional<SavingAccount> consultSavingAccount(Long id) {
     return savingAccountRepository.findById(id);
+  }
+
+  @Override
+  public List<CurrentAccount> getAllCurrentAccounts() {
+    return currentAccountRepository.findByBank(bank);
+  }
+
+  @Override
+  public List<SavingAccount> getAllSavingAccounts() {
+    return savingAccountRepository.findByBank(bank);
   }
 
   @Override
