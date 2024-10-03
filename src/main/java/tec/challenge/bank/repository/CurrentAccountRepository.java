@@ -13,5 +13,5 @@ import tec.challenge.bank.models.CurrentAccount;
 public interface CurrentAccountRepository extends JpaRepository<CurrentAccount, Long> {
   Optional<CurrentAccount> findByCpf(Long cpf);
 
-  List<CurrentAccount> findByBank(Optional<Bank> bank);
+  List<CurrentAccount> findByBank(Bank bank);
 }

@@ -59,12 +59,12 @@ public class BankService implements IBankService {
 
   @Override
   public List<CurrentAccount> getAllCurrentAccounts() {
-    return currentAccountRepository.findByBank(bank);
+    return currentAccountRepository.findByBank(bank.get());
   }
 
   @Override
   public List<SavingAccount> getAllSavingAccounts() {
-    return savingAccountRepository.findByBank(bank);
+    return savingAccountRepository.findByBank(bank.get());
   }
 
   @Override

@@ -13,5 +13,5 @@ import tec.challenge.bank.models.SavingAccount;
 public interface SavingAccountRepository extends JpaRepository<SavingAccount, Long> {
   Optional<SavingAccount> findByCpf(Long cpf);
 
-  List<SavingAccount> findByBank(Optional<Bank> bank);
+  List<SavingAccount> findByBank(Bank bank);
 }
