@@ -21,6 +21,7 @@ import tec.challenge.bank.repository.SavingAccountRepository;
 
 @Service
 public class BankService implements IBankService {
+
   @Autowired
   CurrentAccountRepository currentAccountRepository;
   @Autowired
@@ -96,16 +97,20 @@ public class BankService implements IBankService {
     savingAccountRepository.save(account);
   }
 
-  // Método para excluir uma conta
   @Override
   @Transactional
-  public void deleteAccount(Long id) {
-    // Verifica se a conta existe
+  public void deleteCurrentAccount(Long id) {
     CurrentAccount account = currentAccountRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
-
-    // Exclui a conta
     currentAccountRepository.delete(account);
+  }
+
+  @Override
+  @Transactional
+  public void deleteSavingAccount(Long id) {
+    SavingAccount account = savingAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+    savingAccountRepository.delete(account);
   }
 
   @Override

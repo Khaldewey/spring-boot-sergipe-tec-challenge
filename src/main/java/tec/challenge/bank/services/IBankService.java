@@ -26,7 +26,9 @@ public interface IBankService {
 
   public void editSavingAccount(Long id, CreateSavingAccountDto dto);
 
-  public void deleteAccount(Long id);
+  public void deleteCurrentAccount(Long id);
+
+  public void deleteSavingAccount(Long id);
 
   public void depositAtCurrentAccount(Long id);
 

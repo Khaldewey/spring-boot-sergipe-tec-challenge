@@ -5,7 +5,7 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <h1>Bem-vindo ao Dashboard!</h1>
+    <h1>Banco XYZ</h1>
     <p>Aqui você pode realizar operações bancárias.</p> 
     <h2>Criar Conta</h2>
     <form action="#" th:action="@{/dashboard/create-account}" method="post">
@@ -70,7 +70,7 @@
                         <form action="#" th:action="@{/dashboard/edit-current-account/{id}(id=${account.id})}" method="get" style="display:inline;">
                             <button type="submit">Editar</button>
                         </form>
-                        <form action="#" th:action="@{/dashboard/delete-account(id=${account.id})}" method="post" style="display:inline;">
+                        <form action="#" th:action="@{/dashboard/delete-current-account/{id}(id=${account.id})}" method="post" style="display:inline;">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <button type="submit">Excluir</button>
                         </form>
@@ -102,7 +102,7 @@
                         <form action="#" th:action="@{/dashboard/edit-saving-account/{id}(id=${account.id})}" method="get" style="display:inline;">
                             <button type="submit">Editar</button>
                         </form>
-                        <form action="#" th:action="@{/dashboard/delete-account(id=${account.id})}" method="post" style="display:inline;">
+                        <form action="#" th:action="@{/dashboard/delete-saving-account/{id}(id=${account.id})}" method="post" style="display:inline;">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <button type="submit">Excluir</button>
                         </form>

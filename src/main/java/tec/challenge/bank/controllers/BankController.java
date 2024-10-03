@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
 import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
@@ -36,6 +37,7 @@ public class BankController {
     return "dashboard";
   }
 
+  // Criar conta corrente ou poupança
   @PostMapping("/dashboard/create-account")
   public String createAccount(@RequestParam("accountType") String accountType,
       @RequestParam("nameClient") String nameClient,
@@ -62,6 +64,7 @@ public class BankController {
     return "dashboard";
   }
 
+  // Consultar conta corrente
   @PostMapping("/dashboard/consult-current-account")
   public String consultCurrentAccount(@RequestParam("accountId") Long accountId, Model model) {
     Optional<CurrentAccount> account = bankService.consultCurrentAccount(accountId);
@@ -78,6 +81,7 @@ public class BankController {
     return "dashboard";
   }
 
+  // Consultar conta poupança
   @PostMapping("/dashboard/consult-saving-account")
   public String consultSavingAccount(@RequestParam("accountId") Long accountId, Model model) {
     Optional<SavingAccount> account = bankService.consultSavingAccount(accountId);
@@ -94,7 +98,7 @@ public class BankController {
     return "dashboard";
   }
 
-  // editar Conta Corrente
+  // Editar Conta Corrente
   @GetMapping("/dashboard/edit-current-account/{id}")
   public String showEditCurrentAccountForm(@PathVariable("id") Long id, Model model) {
     CurrentAccount account = bankService.consultCurrentAccount(id)
@@ -110,7 +114,7 @@ public class BankController {
     return "redirect:/dashboard";
   }
 
-  // editar Conta Poupança
+  // Editar Conta Poupança
   @GetMapping("/dashboard/edit-saving-account/{id}")
   public String showEditSavingAccountForm(@PathVariable("id") Long id, Model model) {
     SavingAccount account = bankService.consultSavingAccount(id)
@@ -123,6 +127,22 @@ public class BankController {
   @PostMapping("/dashboard/edit-saving-account/{id}")
   public String editSavingAccount(@PathVariable("id") Long id, @ModelAttribute CreateSavingAccountDto accountDto) {
     bankService.editSavingAccount(id, accountDto);
+    return "redirect:/dashboard";
+  }
+
+  // Excluir conta corrente
+  @PostMapping("/dashboard/delete-current-account/{id}")
+  public String deleteCurrentAccount(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    bankService.deleteCurrentAccount(id);
+    redirectAttributes.addFlashAttribute("message", "Conta excluída com sucesso.");
+    return "redirect:/dashboard";
+  }
+
+  // Excluir conta poupança
+  @PostMapping("/dashboard/delete-saving-account/{id}")
+  public String deleteSavingAccount(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    bankService.deleteSavingAccount(id);
+    redirectAttributes.addFlashAttribute("message", "Conta excluída com sucesso.");
     return "redirect:/dashboard";
   }
 
