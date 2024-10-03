@@ -6,7 +6,67 @@
 </head>
 <body>
     <h1>Bem-vindo ao Dashboard!</h1>
-    <p>Aqui você pode realizar operações bancárias.</p>
+    <p>Aqui você pode realizar operações bancárias.</p> 
+    <h2>Criar Conta</h2>
+    <form action="#" th:action="@{/dashboard/create-account}" method="post">
+    <label for="accountType">Tipo de Conta:</label>
+    <select name="accountType" id="accountType">
+        <option value="CURRENT">Conta Corrente</option>
+        <option value="SAVING">Conta Poupança</option>
+    </select>
+    <br>
+    <label for="nameClient">Nome do Cliente:</label>
+    <input type="text" name="nameClient" id="nameClient" required>
+    <br>
+    <label for="saldo">Saldo Inicial:</label>
+    <input type="number" name="saldo" id="saldo" required>
+    <br>
+    <label for="cpf">CPF:</label>
+    <input type="text" name="cpf" id="cpf" required>
+    <br>
+    <button type="submit">Criar Conta</button>
+    </form>
+
+    
+    <h2>Consultar Conta Corrente</h2>
+    <form action="#" th:action="@{/dashboard/consult-current-account}" method="post">
+        <label for="currentAccountId">ID da Conta:</label>
+        <input type="text" name="accountId" id="currentAccountId">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit">Consultar Conta Corrente</button>
+    </form>
+
+    
+    <h2>Consultar Conta Poupança</h2>
+    <form action="#" th:action="@{/dashboard/consult-saving-account}" method="post">
+        <label for="savingAccountId">ID da Conta:</label>
+        <input type="text" name="accountId" id="savingAccountId">
+        <button type="submit">Consultar Conta Poupança</button>
+    </form>
+
+    
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+
+    
+    <div th:if="${currentAccount}">
+        <h3>Detalhes da Conta Corrente:</h3>
+        <p>ID: <span th:text="${currentAccount.id}"></span></p>
+        <p>Nome: <span th:text="${currentAccount.nameClient}"></span></p>
+        <p>Cpf: <span th:text="${currentAccount.cpf}"></span></p>
+        <p>Saldo: <span th:text="${currentAccount.saldo}"></span></p>
+        
+    </div>
+
+
+    <div th:if="${savingAccount}">
+        <h3>Detalhes da Conta Poupança:</h3>
+        <p>ID: <span th:text="${savingAccount.id}"></span></p>
+        <p>Nome: <span th:text="${savingAccount.nameClient}"></span></p>
+        <p>Cpf: <span th:text="${savingAccount.cpf}"></span></p>
+        <p>Saldo: <span th:text="${savingAccount.saldo}"></span></p>
+    </div>
     <form action="#" th:action="@{/logout}" method="post" style="display:inline;">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">Sair</button>

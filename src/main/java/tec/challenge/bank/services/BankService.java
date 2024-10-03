@@ -4,8 +4,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.annotation.PostConstruct;
 import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
 import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.Bank;
@@ -15,6 +17,7 @@ import tec.challenge.bank.repository.BankRepository;
 import tec.challenge.bank.repository.CurrentAccountRepository;
 import tec.challenge.bank.repository.SavingAccountRepository;
 
+@Service
 public class BankService implements IBankService {
   @Autowired
   CurrentAccountRepository currentAccountRepository;
@@ -23,7 +26,17 @@ public class BankService implements IBankService {
   @Autowired
   BankRepository bankRepository;
 
-  private Optional<Bank> bank = bankRepository.findById(1l);
+  private Optional<Bank> bank;
+
+  // Método para buscar o banco ao inicializar o serviço
+  @PostConstruct
+  private void init() {
+    bank = bankRepository.findById(1L);
+
+    if (bank.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Bank not found");
+    }
+  }
 
   @Override
   public void createAccount(Record dto) {
@@ -106,7 +119,7 @@ public class BankService implements IBankService {
     var existingCurrentAccount = currentAccountRepository.findByCpf(currentAccount.cpf());
 
     if (existingCurrentAccount.isPresent()) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Founder already exists");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Current Account already exists");
     }
 
     var newCurrentAccount = new CurrentAccount();
@@ -123,7 +136,7 @@ public class BankService implements IBankService {
     var existingSavingAccount = savingAccountRepository.findByCpf(savingAccount.cpf());
 
     if (existingSavingAccount.isPresent()) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Founder already exists");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Saving Account already exists");
     }
 
     var newSavingAccount = new SavingAccount();

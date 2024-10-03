@@ -2,9 +2,12 @@ package tec.challenge.bank.services;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
 
+@Service
 public interface IBankService {
   public void createAccount(Record type);
 
