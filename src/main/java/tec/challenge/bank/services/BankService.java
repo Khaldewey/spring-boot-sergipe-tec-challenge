@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.annotation.PostConstruct;
@@ -68,15 +69,43 @@ public class BankService implements IBankService {
   }
 
   @Override
-  public void editAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'editAccount'");
+  @Transactional
+  public void editCurrentAccount(Long id, CreateCurrentAccountDto currentAccount) {
+
+    CurrentAccount account = currentAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+    account.setNameClient(currentAccount.nameClient());
+    account.setSaldo(currentAccount.saldo());
+    account.setCpf(currentAccount.cpf());
+
+    currentAccountRepository.save(account);
   }
 
   @Override
+  @Transactional
+  public void editSavingAccount(Long id, CreateSavingAccountDto savingAccount) {
+
+    SavingAccount account = savingAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+    account.setNameClient(savingAccount.nameClient());
+    account.setSaldo(savingAccount.saldo());
+    account.setCpf(savingAccount.cpf());
+
+    savingAccountRepository.save(account);
+  }
+
+  // Método para excluir uma conta
+  @Override
+  @Transactional
   public void deleteAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'deleteAccount'");
+    // Verifica se a conta existe
+    CurrentAccount account = currentAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+    // Exclui a conta
+    currentAccountRepository.delete(account);
   }
 
   @Override

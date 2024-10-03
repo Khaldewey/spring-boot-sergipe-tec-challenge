@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
+import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
 
@@ -20,7 +22,9 @@ public interface IBankService {
 
   public List<SavingAccount> getAllSavingAccounts();
 
-  public void editAccount(Long id);
+  public void editCurrentAccount(Long id, CreateCurrentAccountDto dto);
+
+  public void editSavingAccount(Long id, CreateSavingAccountDto dto);
 
   public void deleteAccount(Long id);
 
