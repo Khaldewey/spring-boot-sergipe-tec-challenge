@@ -3,10 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+    <script>
+        function toggleButton(inputId, buttonId) {
+            const inputField = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            if (inputField.value.trim() === '') {
+                button.disabled = true;
+            } else {
+                button.disabled = false;
+            }
+        }
+        
+        
+        function setupInputListeners() {
+            document.getElementById('currentAccountId').addEventListener('input', function() {
+                toggleButton('currentAccountId', 'consultCurrentAccountButton');
+            });
+
+            document.getElementById('savingAccountId').addEventListener('input', function() {
+                toggleButton('savingAccountId', 'consultSavingAccountButton');
+            });
+        }
+        function redirectToDeposit(action) {
+            window.location.href = action;
+        }
+        window.onload = setupInputListeners;
+    </script>
 </head>
 <body>
     <h1>Banco XYZ</h1>
-    <p>Aqui você pode realizar operações bancárias.</p> 
+    <h2>Depósitos</h2>
+    <label for="depositDropdown">Selecionar Tipo de Conta:</label>
+    <select id="depositDropdown" onchange="redirectToDeposit(this.value)">
+        <option value="">-- Escolha uma Opção --</option>
+        <option value="/dashboard/current-deposits">Conta Corrente</option>
+        <option value="/dashboard/saving-deposits">Conta Poupança</option>
+    </select>
     <h2>Criar Conta</h2>
     <form action="#" th:action="@{/dashboard/create-account}" method="post">
     <label for="accountType">Tipo de Conta:</label>
@@ -33,15 +65,14 @@
         <label for="currentAccountId">ID da Conta:</label>
         <input type="text" name="accountId" id="currentAccountId">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <button type="submit">Consultar Conta Corrente</button>
+        <button type="submit" id="consultCurrentAccountButton" disabled>Consultar Conta Corrente</button>
     </form>
 
-    
     <h2>Consultar Conta Poupança</h2>
     <form action="#" th:action="@{/dashboard/consult-saving-account}" method="post">
         <label for="savingAccountId">ID da Conta:</label>
         <input type="text" name="accountId" id="savingAccountId">
-        <button type="submit">Consultar Conta Poupança</button>
+        <button type="submit" id="consultSavingAccountButton" disabled>Consultar Conta Poupança</button>
     </form>
 
     <h2>Listar Contas</h2>

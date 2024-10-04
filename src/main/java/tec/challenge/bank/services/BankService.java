@@ -77,7 +77,7 @@ public class BankService implements IBankService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
     account.setNameClient(currentAccount.nameClient());
-    account.setSaldo(currentAccount.saldo());
+    // account.setSaldo(currentAccount.saldo());
     account.setCpf(currentAccount.cpf());
 
     currentAccountRepository.save(account);
@@ -91,7 +91,7 @@ public class BankService implements IBankService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
     account.setNameClient(savingAccount.nameClient());
-    account.setSaldo(savingAccount.saldo());
+    // account.setSaldo(savingAccount.saldo());
     account.setCpf(savingAccount.cpf());
 
     savingAccountRepository.save(account);
@@ -114,15 +114,23 @@ public class BankService implements IBankService {
   }
 
   @Override
-  public void depositAtCurrentAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'depositAtCurrentAccount'");
+  @Transactional
+  public void depositAtCurrentAccount(Long id, Float balance) {
+
+    CurrentAccount account = currentAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+    Float currentBalance = account.getSaldo();
+    account.setSaldo(currentBalance + balance);
+    currentAccountRepository.save(account);
   }
 
   @Override
-  public void depositAtSavingAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'depositAtSavingAccount'");
+  public void depositAtSavingAccount(Long id, Float balance) {
+    SavingAccount account = savingAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+    Float savingBalance = account.getSaldo();
+    account.setSaldo(savingBalance + balance);
+    savingAccountRepository.save(account);
   }
 
   @Override

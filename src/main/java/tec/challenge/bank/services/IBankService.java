@@ -30,9 +30,9 @@ public interface IBankService {
 
   public void deleteSavingAccount(Long id);
 
-  public void depositAtCurrentAccount(Long id);
+  public void depositAtCurrentAccount(Long id, Float balance);
 
-  public void depositAtSavingAccount(Long id);
+  public void depositAtSavingAccount(Long id, Float balance);
 
   public void withdrawAtCurrentAccount(Long id);
 

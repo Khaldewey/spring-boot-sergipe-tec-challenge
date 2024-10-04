@@ -146,4 +146,33 @@ public class BankController {
     return "redirect:/dashboard";
   }
 
+  // Depositar em conta corrente
+  @GetMapping("/dashboard/current-deposits")
+  public String showDepositAtCurrentAccount(Model model) {
+    List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
+    model.addAttribute("currentAccounts", currentAccounts);
+    return "deposit-current-account";
+  }
+
+  @PostMapping("/dashboard/deposit-current-account")
+  public String depositAtCurrentAccount(@RequestParam("accountId") Long accountId,
+      @RequestParam("balance") Float balance) {
+    bankService.depositAtCurrentAccount(accountId, balance);
+    return "redirect:/dashboard/current-deposits";
+  }
+
+  // Depositar em conta corrente
+  @GetMapping("/dashboard/saving-deposits")
+  public String showDepositAtSavingAccount(Model model) {
+    List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
+    model.addAttribute("savingAccounts", savingAccounts);
+    return "deposit-saving-account";
+  }
+
+  @PostMapping("/dashboard/deposit-saving-account")
+  public String depositAtSavingAccount(@RequestParam("accountId") Long accountId,
+      @RequestParam("balance") Float balance) {
+    bankService.depositAtSavingAccount(accountId, balance);
+    return "redirect:/dashboard/saving-deposits";
+  }
 }
