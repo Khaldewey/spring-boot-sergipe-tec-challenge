@@ -27,6 +27,9 @@
         function redirectToDeposit(action) {
             window.location.href = action;
         }
+        function redirectToWithdraw(action) {
+            window.location.href = action;
+        }
         window.onload = setupInputListeners;
     </script>
 </head>
@@ -38,6 +41,13 @@
         <option value="">-- Escolha uma Opção --</option>
         <option value="/dashboard/current-deposits">Conta Corrente</option>
         <option value="/dashboard/saving-deposits">Conta Poupança</option>
+    </select>
+    <h2>Saques</h2>
+    <label for="depositDropdown">Selecionar Tipo de Conta:</label>
+    <select id="depositDropdown" onchange="redirectToWithdraw(this.value)">
+        <option value="">-- Escolha uma Opção --</option>
+        <option value="/dashboard/current-withdraws">Conta Corrente</option>
+        <option value="/dashboard/saving-withdraws">Conta Poupança</option>
     </select>
     <h2>Criar Conta</h2>
     <form action="#" th:action="@{/dashboard/create-account}" method="post">

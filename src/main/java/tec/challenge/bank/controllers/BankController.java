@@ -161,7 +161,7 @@ public class BankController {
     return "redirect:/dashboard/current-deposits";
   }
 
-  // Depositar em conta corrente
+  // Depositar em conta poupança
   @GetMapping("/dashboard/saving-deposits")
   public String showDepositAtSavingAccount(Model model) {
     List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
@@ -174,5 +174,49 @@ public class BankController {
       @RequestParam("balance") Float balance) {
     bankService.depositAtSavingAccount(accountId, balance);
     return "redirect:/dashboard/saving-deposits";
+  }
+
+  // Sacar de conta corrente
+  @GetMapping("/dashboard/current-withdraws")
+  public String showWithdrawAtCurrentAccount(Model model) {
+    List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
+    model.addAttribute("currentAccounts", currentAccounts);
+    return "withdraw-current-account";
+  }
+
+  @PostMapping("/dashboard/withdraw-current-account")
+  public String withdrawAtCurrentAccount(@RequestParam("accountId") Long accountId,
+      @RequestParam("balance") Float balance,
+      RedirectAttributes redirectAttributes) {
+
+    try {
+      bankService.withdrawAtCurrentAccount(accountId, balance);
+      redirectAttributes.addFlashAttribute("message", "Saque realizado com sucesso.");
+    } catch (ResponseStatusException e) {
+      redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
+    }
+    return "redirect:/dashboard/current-withdraws";
+  }
+
+  // Sacar de conta poupança
+  @GetMapping("/dashboard/saving-withdraws")
+  public String showWithdrawAtSavingAccount(Model model) {
+    List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
+    model.addAttribute("savingAccounts", savingAccounts);
+    return "withdraw-saving-account";
+  }
+
+  @PostMapping("/dashboard/withdraw-saving-account")
+  public String withdrawAtSavingAccount(@RequestParam("accountId") Long accountId,
+      @RequestParam("balance") Float balance,
+      RedirectAttributes redirectAttributes) {
+
+    try {
+      bankService.withdrawAtSavingAccount(accountId, balance);
+      redirectAttributes.addFlashAttribute("message", "Saque realizado com sucesso.");
+    } catch (ResponseStatusException e) {
+      redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
+    }
+    return "redirect:/dashboard/saving-withdraws";
   }
 }

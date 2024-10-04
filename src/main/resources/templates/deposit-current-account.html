@@ -5,10 +5,8 @@
     <title>Depositar em Conta Corrente</title>
     <script>
         function showDepositInput(accountId) {
-            // Definindo o valor do campo hidden e exibindo o ID no título
             document.getElementById('accountId').value = accountId;
             document.getElementById('account-id-display').textContent = accountId;
-            // Mostrando o formulário de depósito
             document.getElementById('deposit-form').style.display = 'block';
         }
     </script>
@@ -16,7 +14,7 @@
 <body>
     <h1>Depositar em Conta Corrente</h1>
 
-    <!-- Tabela com a lista de contas correntes -->
+    
     <table>
         <thead>
             <tr>
@@ -32,7 +30,7 @@
                 <td th:text="${account.nameClient}">Cliente 1</td>
                 <td th:text="${account.saldo}">1000.00</td>
                 <td>
-                    <!-- Botão que chama a função showDepositInput com o ID da conta -->
+                    
                     <button type="button" th:onclick="'showDepositInput(' + ${account.id} + ')'">
                         Selecionar
                     </button>
@@ -41,11 +39,10 @@
         </tbody>
     </table>
 
-    <!-- Formulário de depósito (escondido até que uma conta seja selecionada) -->
+    
     <div id="deposit-form" style="display: none;">
         <h3>Fazer Depósito na conta ID: <span id="account-id-display"></span></h3>
         <form th:action="@{/dashboard/deposit-current-account}" method="post">
-            <!-- Campo oculto para armazenar o ID da conta -->
             <input type="hidden" id="accountId" name="accountId" />
             <label for="depositAmount">Valor do Depósito:</label>
             <input type="number" id="depositAmount" name="balance" step="0.01" required />

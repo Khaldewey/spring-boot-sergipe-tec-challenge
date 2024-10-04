@@ -34,13 +34,13 @@ public interface IBankService {
 
   public void depositAtSavingAccount(Long id, Float balance);
 
-  public void withdrawAtCurrentAccount(Long id);
+  public void withdrawAtCurrentAccount(Long id, Float balance);
 
-  public void withdrawAtSavingAccount(Long id);
+  public void withdrawAtSavingAccount(Long id, Float balance);
 
-  public void transferAtCurrentAccount(Long sender_id, Long recipient_id);
+  public void transferAtCurrentAccount(Long sender_id, Long recipient_id, Float balance);
 
-  public void transferAtSavingAccount(Long sender_id, Long recipient_id);
+  public void transferAtSavingAccount(Long sender_id, Long recipient_id, Float balance);
 
   public void statement();
 }

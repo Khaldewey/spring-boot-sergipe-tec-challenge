@@ -134,25 +134,38 @@ public class BankService implements IBankService {
   }
 
   @Override
-  public void withdrawAtCurrentAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'withdrawAtCurrentAccount'");
+  public void withdrawAtCurrentAccount(Long id, Float balance) {
+    CurrentAccount account = currentAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+    Float currentBalance = account.getSaldo();
+    if (!suficientBalance(currentBalance, balance)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
+    }
+
+    account.setSaldo(currentBalance - balance);
+    currentAccountRepository.save(account);
   }
 
   @Override
-  public void withdrawAtSavingAccount(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'withdrawAtSavingAccount'");
+  public void withdrawAtSavingAccount(Long id, Float balance) {
+    SavingAccount account = savingAccountRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+    Float savingBalance = account.getSaldo();
+    if (!suficientBalance(savingBalance, balance)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
+    }
+
+    account.setSaldo(savingBalance - balance);
+    savingAccountRepository.save(account);
   }
 
   @Override
-  public void transferAtCurrentAccount(Long sender_id, Long recipient_id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'transferAtCurrentAccount'");
+  public void transferAtCurrentAccount(Long sender_id, Long recipient_id, Float balance) {
+
   }
 
   @Override
-  public void transferAtSavingAccount(Long sender_id, Long recipient_id) {
+  public void transferAtSavingAccount(Long sender_id, Long recipient_id, Float balance) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'transferAtSavingAccount'");
   }
@@ -203,4 +216,10 @@ public class BankService implements IBankService {
     return newSavingAccount;
   }
 
+  private Boolean suficientBalance(Float currentBalance, Float balance) {
+    if (currentBalance - balance >= 0) {
+      return true;
+    }
+    return false;
+  }
 }
