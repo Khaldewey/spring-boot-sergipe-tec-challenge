@@ -159,15 +159,64 @@ public class BankService implements IBankService {
     savingAccountRepository.save(account);
   }
 
+  // Atenção: Recomendado refatorar estruturas condicionais!
   @Override
-  public void transferAtCurrentAccount(Long sender_id, Long recipient_id, Float balance) {
+  public void transfer(Long sender_id, Long recipient_id, String typeAccountSender, String typeAccountRecipient,
+      Float balance) {
+    // Atenção: Recomendado refatorar a partir daqui!
+    if (defineTypeAccountInTransfer(typeAccountSender)) {
 
-  }
+      CurrentAccount sendAccount = currentAccountRepository.findById(sender_id)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender Account not found"));
+      Float currentBalanceSendAccount = sendAccount.getSaldo();
+      if (!suficientBalance(currentBalanceSendAccount, balance)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
+      }
+      sendAccount.setSaldo(currentBalanceSendAccount - balance);
+      currentAccountRepository.save(sendAccount);
 
-  @Override
-  public void transferAtSavingAccount(Long sender_id, Long recipient_id, Float balance) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'transferAtSavingAccount'");
+      if (defineTypeAccountInTransfer(typeAccountRecipient)) {
+
+        CurrentAccount recipientAccount = currentAccountRepository.findById(recipient_id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
+        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
+        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
+        currentAccountRepository.save(recipientAccount);
+      } else {
+
+        SavingAccount recipientAccount = savingAccountRepository.findById(recipient_id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
+        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
+        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
+        savingAccountRepository.save(recipientAccount);
+      }
+    } else {
+
+      SavingAccount sendAccount = savingAccountRepository.findById(sender_id)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender Account not found"));
+      Float currentBalanceSendAccount = sendAccount.getSaldo();
+      if (!suficientBalance(currentBalanceSendAccount, balance)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
+      }
+      sendAccount.setSaldo(currentBalanceSendAccount - balance);
+      savingAccountRepository.save(sendAccount);
+
+      if (defineTypeAccountInTransfer(typeAccountRecipient)) {
+
+        CurrentAccount recipientAccount = currentAccountRepository.findById(recipient_id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
+        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
+        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
+        currentAccountRepository.save(recipientAccount);
+      } else {
+
+        SavingAccount recipientAccount = savingAccountRepository.findById(recipient_id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
+        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
+        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
+        savingAccountRepository.save(recipientAccount);
+      }
+    }
   }
 
   @Override
@@ -222,4 +271,12 @@ public class BankService implements IBankService {
     }
     return false;
   }
+
+  private Boolean defineTypeAccountInTransfer(String type) {
+    if (type.equals("current")) {
+      return true;
+    }
+    return false;
+  }
+
 }

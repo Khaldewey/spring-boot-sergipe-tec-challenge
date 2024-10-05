@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
 import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.CurrentAccount;
@@ -219,4 +218,34 @@ public class BankController {
     }
     return "redirect:/dashboard/saving-withdraws";
   }
+
+  @GetMapping("/dashboard/transfers")
+  public String transfer(Model model) {
+    List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
+    List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
+
+    model.addAttribute("currentAccounts", currentAccounts);
+    model.addAttribute("savingAccounts", savingAccounts);
+    return "transfers";
+  }
+
+  @PostMapping("/dashboard/transfer")
+  public String transfer(
+      @RequestParam("senderAccountId") Long senderId,
+      @RequestParam("recipientAccountId") Long recipientId,
+      @RequestParam("senderAccountType") String senderType,
+      @RequestParam("recipientAccountType") String recipientType,
+      @RequestParam("transferValue") Float transferValue,
+      RedirectAttributes redirectAttributes,
+      Model model) {
+    try {
+      bankService.transfer(senderId, recipientId, senderType, recipientType, transferValue);
+      redirectAttributes.addFlashAttribute("message", "Transferência realizada com sucesso.");
+    } catch (ResponseStatusException e) {
+      redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
+    }
+
+    return "redirect:/dashboard/transfers";
+  }
+
 }
