@@ -39,7 +39,7 @@ public interface IBankService {
   public void withdrawAtSavingAccount(Long id, Float balance);
 
   public void transfer(Long sender_id, Long recipient_id, String typeAccountSender, String typeAccountRecipient,
-      Float balance);
+      Float balance, String observation);
 
   public void statement();
 }

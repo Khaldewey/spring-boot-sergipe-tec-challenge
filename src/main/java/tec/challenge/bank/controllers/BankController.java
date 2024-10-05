@@ -235,11 +235,12 @@ public class BankController {
       @RequestParam("recipientAccountId") Long recipientId,
       @RequestParam("senderAccountType") String senderType,
       @RequestParam("recipientAccountType") String recipientType,
+      @RequestParam("observation") String observation,
       @RequestParam("transferValue") Float transferValue,
       RedirectAttributes redirectAttributes,
       Model model) {
     try {
-      bankService.transfer(senderId, recipientId, senderType, recipientType, transferValue);
+      bankService.transfer(senderId, recipientId, senderType, recipientType, transferValue, observation);
       redirectAttributes.addFlashAttribute("message", "Transferência realizada com sucesso.");
     } catch (ResponseStatusException e) {
       redirectAttributes.addFlashAttribute("errorMessage", e.getReason());

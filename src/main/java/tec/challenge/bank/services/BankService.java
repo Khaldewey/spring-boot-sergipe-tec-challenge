@@ -1,5 +1,6 @@
 package tec.challenge.bank.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,11 @@ import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.Bank;
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
+import tec.challenge.bank.models.TransactionBank;
 import tec.challenge.bank.repository.BankRepository;
 import tec.challenge.bank.repository.CurrentAccountRepository;
 import tec.challenge.bank.repository.SavingAccountRepository;
+import tec.challenge.bank.repository.TransactionBankRepository;
 
 @Service
 public class BankService implements IBankService {
@@ -28,6 +31,8 @@ public class BankService implements IBankService {
   SavingAccountRepository savingAccountRepository;
   @Autowired
   BankRepository bankRepository;
+  @Autowired
+  TransactionBankRepository transactionBankRepository;
 
   private Optional<Bank> bank;
 
@@ -159,64 +164,101 @@ public class BankService implements IBankService {
     savingAccountRepository.save(account);
   }
 
-  // Atenção: Recomendado refatorar estruturas condicionais!
   @Override
   public void transfer(Long sender_id, Long recipient_id, String typeAccountSender, String typeAccountRecipient,
-      Float balance) {
-    // Atenção: Recomendado refatorar a partir daqui!
-    if (defineTypeAccountInTransfer(typeAccountSender)) {
+      Float balance, String observation) {
+    if (typeAccountSender.equals("current")) {
+      transferFromCurrentAccount(sender_id, recipient_id, balance, observation, typeAccountRecipient);
+    } else {
+      transferFromSavingAccount(sender_id, recipient_id, balance, observation, typeAccountRecipient);
+    }
+  }
 
-      CurrentAccount sendAccount = currentAccountRepository.findById(sender_id)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender Account not found"));
-      Float currentBalanceSendAccount = sendAccount.getSaldo();
-      if (!suficientBalance(currentBalanceSendAccount, balance)) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
-      }
-      sendAccount.setSaldo(currentBalanceSendAccount - balance);
-      currentAccountRepository.save(sendAccount);
+  private void transferFromCurrentAccount(Long sender_id, Long recipient_id, Float balance, String observation,
+      String typeAccountRecipient) {
+    CurrentAccount sendAccount = currentAccountRepository.findById(sender_id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender Account not found"));
+    validateBalance(sendAccount.getSaldo(), balance);
+    sendAccount.setSaldo(sendAccount.getSaldo() - balance);
+    currentAccountRepository.save(sendAccount);
+    createTransferTransactionBank("transfer", LocalDateTime.now(), observation, balance, "current", true, sender_id,
+        recipient_id);
 
-      if (defineTypeAccountInTransfer(typeAccountRecipient)) {
+    handleRecipientAccount(recipient_id, balance, observation, typeAccountRecipient, sender_id);
+  }
 
-        CurrentAccount recipientAccount = currentAccountRepository.findById(recipient_id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
-        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
-        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
-        currentAccountRepository.save(recipientAccount);
+  private void transferFromSavingAccount(Long sender_id, Long recipient_id, Float balance, String observation,
+      String typeAccountRecipient) {
+    SavingAccount sendAccount = savingAccountRepository.findById(sender_id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender Account not found"));
+    validateBalance(sendAccount.getSaldo(), balance);
+    sendAccount.setSaldo(sendAccount.getSaldo() - balance);
+    savingAccountRepository.save(sendAccount);
+    createTransferTransactionBank("transfer", LocalDateTime.now(), observation, balance, "saving", true, sender_id,
+        recipient_id);
+
+    handleRecipientAccount(recipient_id, balance, observation, typeAccountRecipient, sender_id);
+  }
+
+  private void handleRecipientAccount(Long recipient_id, Float balance, String observation, String typeAccountRecipient,
+      Long sender_id) {
+    if (typeAccountRecipient.equals("current")) {
+      CurrentAccount recipientAccount = currentAccountRepository.findById(recipient_id)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
+      recipientAccount.setSaldo(recipientAccount.getSaldo() + balance);
+      currentAccountRepository.save(recipientAccount);
+      createTransferTransactionBank("transfer", LocalDateTime.now(), observation, balance, "current", false, sender_id,
+          recipient_id);
+    } else {
+      SavingAccount recipientAccount = savingAccountRepository.findById(recipient_id)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
+      recipientAccount.setSaldo(recipientAccount.getSaldo() + balance);
+      savingAccountRepository.save(recipientAccount);
+      createTransferTransactionBank("transfer", LocalDateTime.now(), observation, balance, "saving", false, sender_id,
+          recipient_id);
+    }
+  }
+
+  private void validateBalance(Float currentBalance, Float balance) {
+    if (!suficientBalance(currentBalance, balance)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
+    }
+  }
+
+  private void createTransferTransactionBank(String operation, LocalDateTime dateTimeOperation, String observation,
+      Float value, String typeAccount, Boolean sender, Long sender_id, Long recipient_id) {
+    TransactionBank newTransaction = new TransactionBank();
+    if (typeAccount.equals("current")) {
+      Optional<CurrentAccount> accountOpt = sender ? currentAccountRepository.findById(sender_id)
+          : currentAccountRepository.findById(recipient_id);
+      CurrentAccount account = accountOpt
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+      if (sender) {
+        newTransaction.setCurrentAccount(account);
+        newTransaction.setDescription("Transferiu R$" + value + " para a conta ID: " + recipient_id);
       } else {
-
-        SavingAccount recipientAccount = savingAccountRepository.findById(recipient_id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
-        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
-        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
-        savingAccountRepository.save(recipientAccount);
+        newTransaction.setCurrentAccount(account);
+        newTransaction.setDescription("Recebeu R$" + value + " da conta ID: " + sender_id);
       }
     } else {
-
-      SavingAccount sendAccount = savingAccountRepository.findById(sender_id)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender Account not found"));
-      Float currentBalanceSendAccount = sendAccount.getSaldo();
-      if (!suficientBalance(currentBalanceSendAccount, balance)) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta operação.");
-      }
-      sendAccount.setSaldo(currentBalanceSendAccount - balance);
-      savingAccountRepository.save(sendAccount);
-
-      if (defineTypeAccountInTransfer(typeAccountRecipient)) {
-
-        CurrentAccount recipientAccount = currentAccountRepository.findById(recipient_id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
-        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
-        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
-        currentAccountRepository.save(recipientAccount);
+      Optional<SavingAccount> accountOpt = sender ? savingAccountRepository.findById(sender_id)
+          : savingAccountRepository.findById(recipient_id);
+      SavingAccount account = accountOpt
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+      if (sender) {
+        newTransaction.setSavingAccount(account);
+        newTransaction.setDescription("Transferiu R$" + value + " para a conta ID: " + recipient_id);
       } else {
-
-        SavingAccount recipientAccount = savingAccountRepository.findById(recipient_id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipient Account not found"));
-        Float currentBalanceRecipientAccount = recipientAccount.getSaldo();
-        recipientAccount.setSaldo(currentBalanceRecipientAccount + balance);
-        savingAccountRepository.save(recipientAccount);
+        newTransaction.setSavingAccount(account);
+        newTransaction.setDescription("Recebeu R$" + value + " da conta ID: " + sender_id);
       }
     }
+
+    newTransaction.setDateTimeOperation(dateTimeOperation);
+    newTransaction.setObservation(observation);
+    newTransaction.setOperation(operation);
+    newTransaction.setValue(value);
+    transactionBankRepository.save(newTransaction);
   }
 
   @Override
@@ -267,13 +309,6 @@ public class BankService implements IBankService {
 
   private Boolean suficientBalance(Float currentBalance, Float balance) {
     if (currentBalance - balance >= 0) {
-      return true;
-    }
-    return false;
-  }
-
-  private Boolean defineTypeAccountInTransfer(String type) {
-    if (type.equals("current")) {
       return true;
     }
     return false;

@@ -47,6 +47,11 @@
             <input type="number" id="transferValue" name="transferValue" min="0" step="0.01" required>
         </div>
 
+        <div>
+            <label for="observation">Observação:</label>
+            <textarea id="observation" name="observation" rows="4" cols="50" placeholder="Digite uma observação (opcional)"></textarea>
+        </div>
+
         <button type="submit">Transferir</button>
     </form>
     <div th:if="${errorMessage}">
@@ -60,7 +65,6 @@
     <a href="/dashboard">Voltar</a>
 
     <script>
-       
         function updateHiddenFields(dropdownId, hiddenFieldId) {
             const dropdown = document.getElementById(dropdownId);
             const selectedOption = dropdown.options[dropdown.selectedIndex];
@@ -68,18 +72,13 @@
             document.getElementById(hiddenFieldId).value = accountType;
         }
 
-        
         function updateRecipientDropdown() {
             const senderDropdown = document.getElementById('senderAccountDropdown');
             const recipientDropdown = document.getElementById('recipientAccountDropdown');
-            
-           
             const selectedSenderId = senderDropdown.value;
 
-            
             for (let i = 0; i < recipientDropdown.options.length; i++) {
                 const option = recipientDropdown.options[i];
-                
                 if (option.value === selectedSenderId) {
                     option.style.display = 'none'; 
                 } else {
