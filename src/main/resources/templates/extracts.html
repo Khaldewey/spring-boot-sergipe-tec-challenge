@@ -1,11 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Extratos</title>
 </head>
 <body>
-    <h1>Extratos</h1>
+    <h1>Extratos da Conta</h1>
     
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Tipo</th>
+                <th>Observação</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="transaction : ${transactions}">
+                <td th:text="${#dates.format(transaction.dateTimeOperation, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${transaction.description}"></td>
+                <td th:text="${transaction.value}"></td>
+                <td th:text="${transaction.operation }"></td>
+                <td th:text="${transaction.observation }"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <a href="/dashboard">Voltar ao Dashboard</a>
 </body>
 </html>

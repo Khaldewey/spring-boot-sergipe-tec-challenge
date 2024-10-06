@@ -1,5 +1,6 @@
 package tec.challenge.bank.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
 import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.CurrentAccount;
 import tec.challenge.bank.models.SavingAccount;
+import tec.challenge.bank.models.TransactionBank;
 import tec.challenge.bank.services.IBankService;
 
 @Controller
@@ -191,10 +193,12 @@ public class BankController {
   @PostMapping("/dashboard/withdraw-current-account")
   public String withdrawAtCurrentAccount(@RequestParam("accountId") Long accountId,
       @RequestParam("balance") Float balance,
+      @RequestParam("observation") String observation,
+      @RequestParam("typeOperation") String typeOperation,
       RedirectAttributes redirectAttributes) {
 
     try {
-      bankService.withdrawAtCurrentAccount(accountId, balance);
+      bankService.withdrawAtCurrentAccount(accountId, balance, observation, typeOperation);
       redirectAttributes.addFlashAttribute("message", "Saque realizado com sucesso.");
     } catch (ResponseStatusException e) {
       redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
@@ -213,10 +217,12 @@ public class BankController {
   @PostMapping("/dashboard/withdraw-saving-account")
   public String withdrawAtSavingAccount(@RequestParam("accountId") Long accountId,
       @RequestParam("balance") Float balance,
+      @RequestParam("observation") String observation,
+      @RequestParam("typeOperation") String typeOperation,
       RedirectAttributes redirectAttributes) {
 
     try {
-      bankService.withdrawAtSavingAccount(accountId, balance);
+      bankService.withdrawAtSavingAccount(accountId, balance, observation, typeOperation);
       redirectAttributes.addFlashAttribute("message", "Saque realizado com sucesso.");
     } catch (ResponseStatusException e) {
       redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
@@ -254,4 +260,37 @@ public class BankController {
     return "redirect:/dashboard/transfers";
   }
 
+  @GetMapping("/dashboard/extracts")
+  public String getAccountExtract(@RequestParam("accountId") Long accountId,
+      @RequestParam("accountType") String accountType,
+      Model model) {
+    List<TransactionBank> transactions;
+
+    if (accountType.equals("current")) {
+      Optional<CurrentAccount> currentAccount = bankService.consultCurrentAccount(accountId);
+      if (currentAccount.isPresent()) {
+        transactions = bankService.transactionByCurrentAccount(currentAccount.get());
+      } else {
+
+        model.addAttribute("message", "Conta Corrente não encontrada.");
+        transactions = new ArrayList<>();
+      }
+    } else if (accountType.equals("saving")) {
+      Optional<SavingAccount> savingAccount = bankService.consultSavingAccount(accountId);
+      if (savingAccount.isPresent()) {
+        transactions = bankService.transactionBySavingAccount(savingAccount.get());
+      } else {
+
+        model.addAttribute("message", "Conta Poupança não encontrada.");
+        transactions = new ArrayList<>();
+      }
+    } else {
+
+      model.addAttribute("message", "Tipo de conta inválido.");
+      transactions = new ArrayList<>();
+    }
+
+    model.addAttribute("transactions", transactions);
+    return "extracts";
+  }
 }

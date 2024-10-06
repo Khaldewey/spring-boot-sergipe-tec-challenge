@@ -50,6 +50,44 @@
         <option value="/dashboard/current-withdraws">Conta Corrente</option>
         <option value="/dashboard/saving-withdraws">Conta Poupança</option>
     </select>
+    
+    <h2>Extratos</h2>
+    <form action="#" th:action="@{/dashboard/extracts}" method="get" id="extractForm">
+        <label for="extractsAccountDropdown">Selecione a conta para extrato:</label>
+        <select id="extractsAccountDropdown" name="accountId" required onchange="setAccountType()">
+            <option value="">-- Selecione uma Conta --</option>
+            
+            <optgroup label="Contas Correntes">
+                <option th:each="account : ${currentAccounts}" 
+                        th:value="${account.id}" 
+                        th:data-account-type="current"
+                        th:text="'Conta Corrente: ' + ${account.id} + ' - ' + ${account.nameClient}">
+                </option>
+            </optgroup>
+           
+            <optgroup label="Contas Poupanças">
+                <option th:each="account : ${savingAccounts}" 
+                        th:value="${account.id}" 
+                        th:data-account-type="saving"
+                        th:text="'Conta Poupança: ' + ${account.id} + ' - ' + ${account.nameClient}">
+                </option>
+            </optgroup>
+        </select>
+        
+        <input type="hidden" name="accountType" id="accountType" value="">
+        <button type="submit">Ver Extrato</button>
+    </form>
+
+
+    <script>
+        function setAccountType() {
+            const dropdown = document.getElementById("extractsAccountDropdown");
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const accountType = selectedOption.getAttribute("data-account-type");
+            document.getElementById("accountType").value = accountType;
+        }
+    </script>
+
     <h2>Criar Conta</h2>
     <form action="#" th:action="@{/dashboard/create-account}" method="post">
     <label for="accountType">Tipo de Conta:</label>

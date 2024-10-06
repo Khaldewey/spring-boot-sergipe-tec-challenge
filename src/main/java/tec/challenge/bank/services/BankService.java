@@ -46,6 +46,18 @@ public class BankService implements IBankService {
   }
 
   @Override
+  public List<TransactionBank> transactionByCurrentAccount(CurrentAccount account) {
+    List<TransactionBank> transactions = transactionBankRepository.findByCurrentAccount(account);
+    return transactions;
+  }
+
+  @Override
+  public List<TransactionBank> transactionBySavingAccount(SavingAccount account) {
+    List<TransactionBank> transactions = transactionBankRepository.findBySavingAccount(account);
+    return transactions;
+  }
+
+  @Override
   public void createAccount(Record dto) {
     if (isWhatTypeAccount(dto)) {
       createCurrentAccount((CreateCurrentAccountDto) dto);
@@ -143,7 +155,7 @@ public class BankService implements IBankService {
   }
 
   @Override
-  public void withdrawAtCurrentAccount(Long id, Float balance) {
+  public void withdrawAtCurrentAccount(Long id, Float balance, String observation, String typeOperation) {
     CurrentAccount account = currentAccountRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
     Float currentBalance = account.getSaldo();
@@ -153,10 +165,11 @@ public class BankService implements IBankService {
 
     account.setSaldo(currentBalance - balance);
     currentAccountRepository.save(account);
+    createExtractWithdrawCurrentAccount(id, balance, observation, LocalDateTime.now(), typeOperation);
   }
 
   @Override
-  public void withdrawAtSavingAccount(Long id, Float balance) {
+  public void withdrawAtSavingAccount(Long id, Float balance, String observation, String typeOperation) {
     SavingAccount account = savingAccountRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
     Float savingBalance = account.getSaldo();
@@ -166,6 +179,7 @@ public class BankService implements IBankService {
 
     account.setSaldo(savingBalance - balance);
     savingAccountRepository.save(account);
+    createExtractWithdrawSavingAccount(id, balance, observation, LocalDateTime.now(), typeOperation);
   }
 
   @Override
@@ -344,7 +358,7 @@ public class BankService implements IBankService {
     transactionBank.setObservation(observation);
     transactionBank.setOperation(typeOperation);
     transactionBank.setValue(value);
-    transactionBank.setDescription("Conta Poupança ID: " + savingAccount.get().getId().toString()
+    transactionBank.setDescription("Conta Poupanca ID: " + savingAccount.get().getId().toString()
         + " recebeu deposito no valor de R$: " + value.toString());
 
     transactionBankRepository.save(transactionBank);
@@ -377,7 +391,7 @@ public class BankService implements IBankService {
     transactionBank.setObservation(observation);
     transactionBank.setOperation(typeOperation);
     transactionBank.setValue(value);
-    transactionBank.setDescription("Conta Poupança ID: " + savingAccount.get().getId().toString()
+    transactionBank.setDescription("Conta Poupanca ID: " + savingAccount.get().getId().toString()
         + " fez um saque de R$: " + value.toString());
 
     transactionBankRepository.save(transactionBank);
