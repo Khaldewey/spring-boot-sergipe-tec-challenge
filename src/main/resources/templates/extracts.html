@@ -24,7 +24,7 @@
         </thead>
         <tbody>
             <tr th:each="transaction : ${transactions}">
-                <td th:text="${#dates.format(transaction.dateTimeOperation, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${transaction.dateTimeOperation}"></td>
                 <td th:text="${transaction.description}"></td>
                 <td th:text="${transaction.value}"></td>
                 <td th:text="${transaction.operation }"></td>
