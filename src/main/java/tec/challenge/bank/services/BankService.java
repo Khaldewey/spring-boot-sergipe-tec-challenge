@@ -120,22 +120,26 @@ public class BankService implements IBankService {
 
   @Override
   @Transactional
-  public void depositAtCurrentAccount(Long id, Float balance) {
+  public void depositAtCurrentAccount(Long id, Float balance, String observation, String typeOperation) {
 
     CurrentAccount account = currentAccountRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
     Float currentBalance = account.getSaldo();
     account.setSaldo(currentBalance + balance);
     currentAccountRepository.save(account);
+
+    createExtractDepositCurrentAccount(id, balance, observation, LocalDateTime.now(), typeOperation);
   }
 
   @Override
-  public void depositAtSavingAccount(Long id, Float balance) {
+  public void depositAtSavingAccount(Long id, Float balance, String observation, String typeOperation) {
     SavingAccount account = savingAccountRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
     Float savingBalance = account.getSaldo();
     account.setSaldo(savingBalance + balance);
     savingAccountRepository.save(account);
+
+    createExtractDepositSavingAccount(id, balance, observation, LocalDateTime.now(), typeOperation);
   }
 
   @Override
@@ -312,6 +316,71 @@ public class BankService implements IBankService {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public void createExtractDepositCurrentAccount(Long id, Float value, String observation,
+      LocalDateTime dateTimeOperation, String typeOperation) {
+    Optional<CurrentAccount> currentAccount = currentAccountRepository.findById(id);
+    TransactionBank transactionBank = new TransactionBank();
+    transactionBank.setCurrentAccount(currentAccount.get());
+    transactionBank.setDateTimeOperation(dateTimeOperation);
+    transactionBank.setObservation(observation);
+    transactionBank.setOperation(typeOperation);
+    transactionBank.setValue(value);
+    transactionBank.setDescription("Conta Corrente ID: " + currentAccount.get().getId().toString()
+        + " recebeu deposito no valor de R$: " + value.toString());
+
+    transactionBankRepository.save(transactionBank);
+  }
+
+  @Override
+  public void createExtractDepositSavingAccount(Long id, Float value, String observation,
+      LocalDateTime dateTimeOperation, String typeOperation) {
+    Optional<SavingAccount> savingAccount = savingAccountRepository.findById(id);
+    TransactionBank transactionBank = new TransactionBank();
+    transactionBank.setSavingAccount(savingAccount.get());
+    transactionBank.setDateTimeOperation(dateTimeOperation);
+    transactionBank.setObservation(observation);
+    transactionBank.setOperation(typeOperation);
+    transactionBank.setValue(value);
+    transactionBank.setDescription("Conta Poupança ID: " + savingAccount.get().getId().toString()
+        + " recebeu deposito no valor de R$: " + value.toString());
+
+    transactionBankRepository.save(transactionBank);
+
+  }
+
+  @Override
+  public void createExtractWithdrawCurrentAccount(Long id, Float value, String observation,
+      LocalDateTime dateTimeOperation, String typeOperation) {
+    Optional<CurrentAccount> currentAccount = currentAccountRepository.findById(id);
+    TransactionBank transactionBank = new TransactionBank();
+    transactionBank.setCurrentAccount(currentAccount.get());
+    transactionBank.setDateTimeOperation(dateTimeOperation);
+    transactionBank.setObservation(observation);
+    transactionBank.setOperation(typeOperation);
+    transactionBank.setValue(value);
+    transactionBank.setDescription("Conta Corrente ID: " + currentAccount.get().getId().toString()
+        + " fez um saque de R$: " + value.toString());
+
+    transactionBankRepository.save(transactionBank);
+  }
+
+  @Override
+  public void createExtractWithdrawSavingAccount(Long id, Float value, String observation,
+      LocalDateTime dateTimeOperation, String typeOperation) {
+    Optional<SavingAccount> savingAccount = savingAccountRepository.findById(id);
+    TransactionBank transactionBank = new TransactionBank();
+    transactionBank.setSavingAccount(savingAccount.get());
+    transactionBank.setDateTimeOperation(dateTimeOperation);
+    transactionBank.setObservation(observation);
+    transactionBank.setOperation(typeOperation);
+    transactionBank.setValue(value);
+    transactionBank.setDescription("Conta Poupança ID: " + savingAccount.get().getId().toString()
+        + " fez um saque de R$: " + value.toString());
+
+    transactionBankRepository.save(transactionBank);
   }
 
 }

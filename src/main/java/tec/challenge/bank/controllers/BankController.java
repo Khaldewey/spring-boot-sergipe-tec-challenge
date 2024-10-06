@@ -155,8 +155,11 @@ public class BankController {
 
   @PostMapping("/dashboard/deposit-current-account")
   public String depositAtCurrentAccount(@RequestParam("accountId") Long accountId,
-      @RequestParam("balance") Float balance) {
-    bankService.depositAtCurrentAccount(accountId, balance);
+      @RequestParam("balance") Float balance,
+      @RequestParam("observation") String observation,
+      @RequestParam("typeOperation") String typeOperation) {
+    bankService.depositAtCurrentAccount(accountId, balance, observation, typeOperation);
+
     return "redirect:/dashboard/current-deposits";
   }
 
@@ -170,8 +173,10 @@ public class BankController {
 
   @PostMapping("/dashboard/deposit-saving-account")
   public String depositAtSavingAccount(@RequestParam("accountId") Long accountId,
-      @RequestParam("balance") Float balance) {
-    bankService.depositAtSavingAccount(accountId, balance);
+      @RequestParam("balance") Float balance,
+      @RequestParam("observation") String observation,
+      @RequestParam("typeOperation") String typeOperation) {
+    bankService.depositAtSavingAccount(accountId, balance, observation, typeOperation);
     return "redirect:/dashboard/saving-deposits";
   }
 
