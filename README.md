@@ -59,6 +59,7 @@ Este projeto utiliza as seguintes tecnologias:
 
 
 ## UML - Diagramas 
-![uml_diagram_class](https://github.com/user-attachments/assets/0b8476be-404d-45c8-adfb-e7ed7da2b3b1)
+![uml_diagram_class](https://github.com/user-attachments/assets/c04eabe6-1dd3-4adb-a0fb-bf7c0f7f03e2)
+
 
 
