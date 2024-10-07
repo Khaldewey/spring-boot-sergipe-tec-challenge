@@ -22,31 +22,42 @@
         }
 
         h1 {
-            text-align: center;
+            text-align: start;
             margin-bottom: 20px;
             color: #2c3e50;
         }
 
         h2 {
+            text-align: center;
             color: #34495e;
             margin-top: 30px;
             margin-bottom: 10px;
         }
 
         h3 {
+            text-align: center;
             color: #34495e;
             margin-top: 20px;
             margin-bottom: 10px;
         }
+        a {
+            display: flex;
+            justify-content: center;
+            text-decoration: none;
+        }
 
         a h2 {
-            color: #2980b9;
+            color: #f9f9f9;;
             text-decoration: none;
             transition: color 0.3s;
+            background-color: #1abc9c;
+            padding: 6px;
+            border-radius: 6px;
+            
         }
 
         a h2:hover {
-            color: #1abc9c;
+            color: #34495e;
         }
 
         label {
@@ -92,6 +103,15 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             margin-bottom: 30px;
+        }
+
+        .form-logout{
+            padding: 0;
+        }
+
+        #button-logout{
+            width: 100%;
+            margin: 0;
         }
 
         table {
@@ -184,7 +204,20 @@
 </head>
 <body>
     <h1>Banco XYZ</h1>
-    <a href="/dashboard/transfers"><h2>Transferências</h2></a>
+    <div style="display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    ">
+        <h2>Estatísticas</h2>
+        <p>Contas Correntes: <span th:text="${#lists.size(currentAccounts)}"></span></p>
+        <p>Contas Poupança: <span th:text="${#lists.size(savingAccounts)}"></span></p>
+    </div>
+    <br>
+    <hr style="border-color: #1abc9c;">
+    <br>
+    <br>
+    <a href="/dashboard/transfers" ><h2>Transferências</h2></a>
     <h2>Depósitos</h2>
     <label for="depositDropdown">Selecionar Tipo de Conta:</label>
     <select id="depositDropdown" onchange="redirectToDeposit(this.value)">
@@ -272,8 +305,10 @@
         <input type="text" name="accountId" id="savingAccountId">
         <button type="submit" id="consultSavingAccountButton" disabled>Consultar Conta Poupança</button>
     </form>
-
+    <br>
+    <hr style="border-color: #1abc9c;">
     <h2>Listar Contas</h2>
+    
     <button id="showCurrentAccountsBtn">Ver Contas Correntes</button>
     <button id="showSavingAccountsBtn">Ver Contas Poupanças</button>
 
@@ -376,9 +411,10 @@
         <p>Cpf: <span th:text="${savingAccount.cpf}"></span></p>
         <p>Saldo: <span th:text="${savingAccount.saldo}"></span></p>
     </div>
-    <form action="#" th:action="@{/logout}" method="post" style="display:block;">
+    <form action="#" th:action="@{/logout}" method="post" style="display:block;" class="form-logout">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <button type="submit">Sair</button>
+        <button type="submit" id="button-logout">Sair</button>
     </form>
+    
 </body>
 </html>
