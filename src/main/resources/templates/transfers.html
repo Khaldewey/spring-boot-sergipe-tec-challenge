@@ -178,12 +178,13 @@
 <body>
     <h1>Transferir entre Contas</h1>
 
-    <form th:action="@{/dashboard/transfer}" method="post">
+    <form th:action="@{/dashboard/transfer}" method="post" onsubmit="return validateForm()">
         <div style="display: flex;">
             <div>
                 <label for="senderAccountDropdown">Conta de Origem:</label>
-                <select id="senderAccountDropdown" name="senderAccountId" onchange="updateHiddenFields('senderAccountDropdown', 'hiddenSenderAccountType'); updateRecipientDropdown();">
-                    <option disabled selected>Selecione a conta de origem</option>
+                <select id="senderAccountDropdown" name="senderAccountId" 
+                        onchange="updateHiddenFields('senderAccountDropdown', 'hiddenSenderAccountType'); updateRecipientDropdown(); checkFormValidity();" required>
+                    <option disabled selected value="">Selecione a conta de origem</option>
                     <th:block th:each="account : ${currentAccounts}">
                         <option th:value="${account.id}" th:data-type="current"
                             th:text="'Conta Corrente ' + ${account.id} + ' - Saldo: ' + ${account.saldo}"></option>
@@ -198,8 +199,9 @@
 
             <div>
                 <label for="recipientAccountDropdown">Conta de Destino:</label>
-                <select id="recipientAccountDropdown" name="recipientAccountId" onchange="updateHiddenFields('recipientAccountDropdown', 'hiddenRecipientAccountType')">
-                    <option disabled selected>Selecione a conta de destino</option>
+                <select id="recipientAccountDropdown" name="recipientAccountId" 
+                        onchange="updateHiddenFields('recipientAccountDropdown', 'hiddenRecipientAccountType'); checkFormValidity();" required>
+                    <option disabled selected value="">Selecione a conta de destino</option>
                     <th:block th:each="account : ${currentAccounts}">
                         <option th:value="${account.id}" th:data-type="current"
                             th:text="'Conta Corrente ' + ${account.id} + ' - Saldo: ' + ${account.saldo}"></option>
@@ -221,11 +223,24 @@
         <div>
             <label for="observation">Observação:</label>
             <textarea id="observation" name="observation" rows="4" cols="50" placeholder="Digite uma observação (opcional)" style="height: 98px; width: 559px; resize: none; overflow: hidden;"></textarea>
-            <!-- <textarea id="observation" name="observation" rows="4" cols="50" placeholder="Digite uma observação (opcional)"></textarea> -->
         </div>
 
-        <button type="submit">Transferir</button>
+        <button type="submit" id="submitButton" disabled>Transferir</button>
     </form>
+    <script>
+        function checkFormValidity() {
+            const senderAccountDropdown = document.getElementById('senderAccountDropdown');
+            const recipientAccountDropdown = document.getElementById('recipientAccountDropdown');
+            const submitButton = document.getElementById('submitButton');
+    
+        
+            if (senderAccountDropdown.value && recipientAccountDropdown.value) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+    </script>
     <div th:if="${errorMessage}">
         <p style="color: red;" th:text="${errorMessage}"></p>
     </div>
@@ -260,6 +275,17 @@
                 option.style.display = 'block'; 
             }
         }
+
+        function validateDeposit() {
+            const depositAmount = document.getElementById('transferValue').value;
+            if (parseFloat(depositAmount) < 0) {
+                alert("O valor do depósito não pode ser negativo.");
+                return false; 
+            }
+            return true; 
+        }
+
+       
     }
     </script>
 </body>
