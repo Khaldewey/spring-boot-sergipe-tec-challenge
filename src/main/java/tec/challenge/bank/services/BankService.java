@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.annotation.PostConstruct;
+
 import tec.challenge.bank.controllers.dtos.CreateCurrentAccountDto;
 import tec.challenge.bank.controllers.dtos.CreateSavingAccountDto;
 import tec.challenge.bank.models.Bank;
@@ -37,17 +37,15 @@ public class BankService implements IBankService {
 
   private Optional<Bank> bank;
 
-  @PostConstruct
-  private void init() {
-    try {
-      bank = bankRepository.findById(1L);
-      if (bank.isEmpty()) {
+  
+  public void initBank() {
+    bank = bankRepository.findById(1L);
+    if (bank.isEmpty()) {
         System.out.println("Banco não encontrado");
-      }
-    } catch (Exception e) {
-      System.err.println("Erro ao buscar o banco: " + e.getMessage());
+    } else {
+        System.out.println("Banco encontrado: " + bank.get().getId());
     }
-  }
+}
 
   @Override
   public List<TransactionBank> transactionByCurrentAccount(CurrentAccount account) {
