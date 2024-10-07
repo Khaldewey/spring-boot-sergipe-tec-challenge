@@ -2,6 +2,7 @@ package tec.challenge.bank.models;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,11 +41,11 @@ public class TransactionBank {
   @Column(name = "description", nullable = false)
   private String description;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "saving_account_id")
   private SavingAccount savingAccount;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "current_account_id")
   private CurrentAccount currentAccount;
 
