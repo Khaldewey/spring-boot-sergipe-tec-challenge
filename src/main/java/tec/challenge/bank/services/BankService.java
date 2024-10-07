@@ -1,6 +1,7 @@
 package tec.challenge.bank.services;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,10 +39,13 @@ public class BankService implements IBankService {
 
   @PostConstruct
   private void init() {
-    bank = bankRepository.findById(1L);
-
-    if (bank.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Bank not found");
+    try {
+      bank = bankRepository.findById(1L);
+      if (bank.isEmpty()) {
+        System.out.println("Banco não encontrado");
+      }
+    } catch (Exception e) {
+      System.err.println("Erro ao buscar o banco: " + e.getMessage());
     }
   }
 
@@ -78,12 +82,12 @@ public class BankService implements IBankService {
 
   @Override
   public List<CurrentAccount> getAllCurrentAccounts() {
-    return currentAccountRepository.findByBank(bank.get());
+    return bank.map(b -> currentAccountRepository.findByBank(b)).orElse(Collections.emptyList());
   }
 
   @Override
   public List<SavingAccount> getAllSavingAccounts() {
-    return savingAccountRepository.findByBank(bank.get());
+    return bank.map(b -> savingAccountRepository.findByBank(b)).orElse(Collections.emptyList());
   }
 
   @Override

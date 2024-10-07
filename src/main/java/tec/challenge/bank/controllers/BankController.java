@@ -31,7 +31,7 @@ public class BankController {
   public String dashboard(Model model) {
     List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
     List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
-
+    
     model.addAttribute("currentAccounts", currentAccounts);
     model.addAttribute("savingAccounts", savingAccounts);
 
