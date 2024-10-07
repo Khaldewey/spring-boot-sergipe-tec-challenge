@@ -297,7 +297,7 @@ public class BankService implements IBankService {
     var existingCurrentAccount = currentAccountRepository.findByCpf(currentAccount.cpf());
 
     if (existingCurrentAccount.isPresent()) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Current Account already exists");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Conta Corrente já existe com esse cpf.");
     }
 
     var newCurrentAccount = new CurrentAccount();
@@ -314,7 +314,7 @@ public class BankService implements IBankService {
     var existingSavingAccount = savingAccountRepository.findByCpf(savingAccount.cpf());
 
     if (existingSavingAccount.isPresent()) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Saving Account already exists");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Conta Poupança já existe com esse cpf.");
     }
 
     var newSavingAccount = new SavingAccount();

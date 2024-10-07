@@ -49,20 +49,42 @@ public class BankController {
 
     model.addAttribute("currentAccounts", currentAccounts);
     model.addAttribute("savingAccounts", savingAccounts);
+    // Antigos métodos de criação de contas sem tratamento de exceção
+    // if ("CURRENT".equalsIgnoreCase(accountType)) {
+    //   CreateCurrentAccountDto currentAccountDto = new CreateCurrentAccountDto(nameClient, saldo, cpf);
+    //   bankService.createAccount(currentAccountDto);
+    // } else if ("SAVING".equalsIgnoreCase(accountType)) {
+    //   CreateSavingAccountDto savingAccountDto = new CreateSavingAccountDto(nameClient, saldo, cpf);
+    //   bankService.createAccount(savingAccountDto);
+    // } else {
+    //   model.addAttribute("message", "Tipo de conta inválido!");
+    //   return "dashboard";
+    // }
+    try {
+      if ("CURRENT".equalsIgnoreCase(accountType)) {
+          CreateCurrentAccountDto currentAccountDto = new CreateCurrentAccountDto(nameClient, saldo, cpf);
+          bankService.createAccount(currentAccountDto);
+          model.addAttribute("createdAccount", currentAccountDto);
+          model.addAttribute("typeAccount", "current");
+      } else if ("SAVING".equalsIgnoreCase(accountType)) {
+          CreateSavingAccountDto savingAccountDto = new CreateSavingAccountDto(nameClient, saldo, cpf);
+          bankService.createAccount(savingAccountDto);
+          model.addAttribute("createdAccount", savingAccountDto); 
+          model.addAttribute("typeAccount", "saving");
+      } else {
+          model.addAttribute("message", "Tipo de conta inválido!");
+          return "create-account";
+      }
 
-    if ("CURRENT".equalsIgnoreCase(accountType)) {
-      CreateCurrentAccountDto currentAccountDto = new CreateCurrentAccountDto(nameClient, saldo, cpf);
-      bankService.createAccount(currentAccountDto);
-    } else if ("SAVING".equalsIgnoreCase(accountType)) {
-      CreateSavingAccountDto savingAccountDto = new CreateSavingAccountDto(nameClient, saldo, cpf);
-      bankService.createAccount(savingAccountDto);
-    } else {
-      model.addAttribute("message", "Tipo de conta inválido!");
-      return "dashboard";
+      model.addAttribute("message", "Conta criada com sucesso!");
+    } catch (ResponseStatusException e) {
+        model.addAttribute("message", e.getReason());
+    } catch (Exception e) {
+        model.addAttribute("message", "Ocorreu um erro ao criar a conta.");
     }
 
-    model.addAttribute("message", "Conta criada com sucesso!");
-    return "dashboard";
+    
+    return "create-account";
   }
 
   // Consultar conta corrente
@@ -110,9 +132,18 @@ public class BankController {
   }
 
   @PostMapping("/dashboard/edit-current-account/{id}")
-  public String editCurrentAccount(@PathVariable("id") Long id, @ModelAttribute CreateCurrentAccountDto accountDto) {
-    bankService.editCurrentAccount(id, accountDto);
+  public String editCurrentAccount(@PathVariable("id") Long id, @ModelAttribute CreateCurrentAccountDto accountDto,  RedirectAttributes redirectAttributes) {
+    // bankService.editCurrentAccount(id, accountDto);
+    try {
+      bankService.editCurrentAccount(id, accountDto);
+      redirectAttributes.addFlashAttribute("message", "Conta editada com sucesso!");
+  } catch (ResponseStatusException e) {
+    redirectAttributes.addFlashAttribute("message", e.getReason());
+  } catch (Exception e) {
+    redirectAttributes.addFlashAttribute("message", "Ocorreu um erro ao editar a conta.");
+  }
     return "redirect:/dashboard";
+    
   }
 
   // Editar Conta Poupança
@@ -126,8 +157,16 @@ public class BankController {
   }
 
   @PostMapping("/dashboard/edit-saving-account/{id}")
-  public String editSavingAccount(@PathVariable("id") Long id, @ModelAttribute CreateSavingAccountDto accountDto) {
-    bankService.editSavingAccount(id, accountDto);
+  public String editSavingAccount(@PathVariable("id") Long id, @ModelAttribute CreateSavingAccountDto accountDto, RedirectAttributes redirectAttributes) {
+    // bankService.editSavingAccount(id, accountDto);
+    try {
+      bankService.editSavingAccount(id, accountDto);
+      redirectAttributes.addFlashAttribute("message", "Conta editada com sucesso!");
+  } catch (ResponseStatusException e) {
+    redirectAttributes.addFlashAttribute("message", e.getReason());
+  } catch (Exception e) {
+    redirectAttributes.addFlashAttribute("message", "Ocorreu um erro ao editar a conta.");
+  }
     return "redirect:/dashboard";
   }
 

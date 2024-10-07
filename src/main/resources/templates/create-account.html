@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Conta</title>
+    <title>Criação de Conta</title>
     <style>
         
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
@@ -50,7 +50,6 @@
             width: 10%;
             border-radius: 9px;
         }
-
 
         a h2 {
             color: #f9f9f9;;
@@ -176,20 +175,24 @@
     </style>
 </head>
 <body>
-    <h1>Editar Conta</h1>
-    <form th:action="@{/dashboard/edit-current-account/{id}(id=${account.id})}" method="post">
-        <input type="hidden" name="id" th:value="${account.id}"/>
-        <label for="nameClient">Nome do Cliente:</label>
-        <input type="text" name="nameClient" id="nameClient" th:value="${account.nameClient}" required>
-        <br>
-        <!-- <label for="saldo">Saldo:</label>
-        <input type="number" name="saldo" id="saldo" th:value="${account.saldo}" required> -->
-        <br>
-        <label for="cpf">CPF:</label>
-        <input type="text" name="cpf" id="cpf" th:value="${account.cpf}" required>
-        <br>
-        <button type="submit">Salvar</button>
-    </form>
+    
+    
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+    
+    <div th:if="${createdAccount}" style="    background: aliceblue;
+    padding: 20px;
+    border-radius: 8px">
+        <h3>Detalhes da Conta Criada:</h3>
+        <p><strong>Tipo de Conta:</strong>
+            <span th:if="${typeAccount == 'current'}">Conta Corrente</span>
+            <span th:if="${typeAccount == 'saving'}">Conta Poupança</span>
+        </p>
+        <p><strong>Nome do Cliente:</strong> <span th:text="${createdAccount.nameClient}"></span></p>
+        <p><strong>Saldo Inicial:</strong> <span th:text="${createdAccount.saldo}"></span></p>
+        <p><strong>CPF:</strong> <span th:text="${createdAccount.cpf}"></span></p>
+    </div>
     <a href="/dashboard">Voltar</a>
 </body>
 </html>
