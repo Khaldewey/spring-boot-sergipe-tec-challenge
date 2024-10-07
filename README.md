@@ -41,7 +41,7 @@ Ao acessar o link citado acima automaticamente será redirecionado para uma pág
 **Username: admin**
 
 
-**Passoword: admin**
+**Password: admin**
 
 ### 6. A aplicação já estará pronta para uso!
 
