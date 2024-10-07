@@ -14,4 +14,6 @@ public interface TransactionBankRepository extends JpaRepository<TransactionBank
   List<TransactionBank> findByCurrentAccount(CurrentAccount account);
 
   List<TransactionBank> findBySavingAccount(SavingAccount account);
+
+  List<TransactionBank> findByOperation(String operation);
 }

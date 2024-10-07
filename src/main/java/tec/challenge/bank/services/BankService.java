@@ -284,9 +284,15 @@ public class BankService implements IBankService {
   }
 
   @Override
-  public void statement() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'statement'");
+  public List<TransactionBank> statement() {
+    return transactionBankRepository.findAll();
+    
+  }
+
+  @Override
+  public List<TransactionBank> statementByType(String type) {
+    return transactionBankRepository.findByOperation(type);
+    
   }
 
   private Boolean isWhatTypeAccount(Record type) {

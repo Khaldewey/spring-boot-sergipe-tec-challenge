@@ -31,7 +31,14 @@ public class BankController {
   public String dashboard(Model model) {
     List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
     List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
-    
+    List<TransactionBank> transactions = bankService.statement();
+    List<TransactionBank> deposits = bankService.statementByType("deposit");
+    List<TransactionBank> withdraws= bankService.statementByType("withdraw"); 
+    List<TransactionBank> transfers = bankService.statementByType("transfer");
+    model.addAttribute("deposits", deposits);
+    model.addAttribute("withdraws", withdraws);
+    model.addAttribute("transfers", transfers);
+    model.addAttribute("transactions", transactions);
     model.addAttribute("currentAccounts", currentAccounts);
     model.addAttribute("savingAccounts", savingAccounts);
 
@@ -46,7 +53,8 @@ public class BankController {
       @RequestParam("cpf") Long cpf, Model model) {
     List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
     List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
-
+    List<TransactionBank> transactions = bankService.statement();
+    model.addAttribute("transactions", transactions);
     model.addAttribute("currentAccounts", currentAccounts);
     model.addAttribute("savingAccounts", savingAccounts);
     // Antigos métodos de criação de contas sem tratamento de exceção
@@ -93,7 +101,14 @@ public class BankController {
     Optional<CurrentAccount> account = bankService.consultCurrentAccount(accountId);
     List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
     List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
-
+    List<TransactionBank> transactions = bankService.statement();
+    List<TransactionBank> deposits = bankService.statementByType("deposit");
+    List<TransactionBank> withdraws= bankService.statementByType("withdraw"); 
+    List<TransactionBank> transfers = bankService.statementByType("transfer");
+    model.addAttribute("deposits", deposits);
+    model.addAttribute("withdraws", withdraws);
+    model.addAttribute("transfers", transfers);
+    model.addAttribute("transactions", transactions);
     model.addAttribute("currentAccounts", currentAccounts);
     model.addAttribute("savingAccounts", savingAccounts);
     if (account.isPresent()) {
@@ -110,7 +125,14 @@ public class BankController {
     Optional<SavingAccount> account = bankService.consultSavingAccount(accountId);
     List<CurrentAccount> currentAccounts = bankService.getAllCurrentAccounts();
     List<SavingAccount> savingAccounts = bankService.getAllSavingAccounts();
-
+    List<TransactionBank> transactions = bankService.statement();
+    List<TransactionBank> deposits = bankService.statementByType("deposit");
+    List<TransactionBank> withdraws= bankService.statementByType("withdraw"); 
+    List<TransactionBank> transfers = bankService.statementByType("transfer");
+    model.addAttribute("deposits", deposits);
+    model.addAttribute("withdraws", withdraws);
+    model.addAttribute("transfers", transfers);
+    model.addAttribute("transactions", transactions);
     model.addAttribute("currentAccounts", currentAccounts);
     model.addAttribute("savingAccounts", savingAccounts);
     if (account.isPresent()) {

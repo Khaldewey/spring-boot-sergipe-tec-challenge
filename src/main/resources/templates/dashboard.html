@@ -216,36 +216,43 @@
             <button type="submit" id="button-logout">Sair</button>
         </form>
     </div>
-    
+    <br>
     <div style="display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    flex-direction: column;
     ">
-        <h2>Estatísticas</h2>
-        <p>Contas Correntes: <span th:text="${#lists.size(currentAccounts)}"></span></p>
-        <p>Contas Poupança: <span th:text="${#lists.size(savingAccounts)}"></span></p>
+        <!-- <h2>Estatísticas</h2> -->
+        <span>Estatísticas:</span>
+        <h4>Transações: <span th:text="${#lists.size(transactions)}"></span></h4>
+        <h4>Depósitos: <span th:text="${#lists.size(deposits)}"></span></h4>
+        <h4>Saques: <span th:text="${#lists.size(withdraws)}"></span></h4>
+        <h4>Transferências: <span th:text="${#lists.size(transfers)}"></span></h4>
+        <h4>Contas Correntes: <span th:text="${#lists.size(currentAccounts)}"></span></h4>
+        <h4>Contas Poupança: <span th:text="${#lists.size(savingAccounts)}"></span></h4>
     </div>
     <br>
     <hr style="border-color: aliceblue;">
     <br>
     <br>
-    <a href="/dashboard/transfers" ><h2>Transferências</h2></a>
-    <h2>Depósitos</h2>
-    <label for="depositDropdown">Selecionar Tipo de Conta:</label>
-    <select id="depositDropdown" onchange="redirectToDeposit(this.value)">
-        <option value="">-- Escolha uma Opção --</option>
-        <option value="/dashboard/current-deposits">Conta Corrente</option>
-        <option value="/dashboard/saving-deposits">Conta Poupança</option>
-    </select>
-    <h2>Saques</h2>
-    <label for="depositDropdown">Selecionar Tipo de Conta:</label>
-    <select id="depositDropdown" onchange="redirectToWithdraw(this.value)">
-        <option value="">-- Escolha uma Opção --</option>
-        <option value="/dashboard/current-withdraws">Conta Corrente</option>
-        <option value="/dashboard/saving-withdraws">Conta Poupança</option>
-    </select>
-    
+    <div style="display: table;
+    align-items: center;
+    margin: auto;">
+        <a href="/dashboard/transfers" ><h2>Transferências</h2></a>
+        <h2>Depósitos</h2>
+        <label for="depositDropdown">Selecionar Tipo de Conta:</label>
+        <select id="depositDropdown" onchange="redirectToDeposit(this.value)">
+            <option value="">-- Escolha uma Opção --</option>
+            <option value="/dashboard/current-deposits">Conta Corrente</option>
+            <option value="/dashboard/saving-deposits">Conta Poupança</option>
+        </select>
+        <h2>Saques</h2>
+        <label for="depositDropdown">Selecionar Tipo de Conta:</label>
+        <select id="depositDropdown" onchange="redirectToWithdraw(this.value)">
+            <option value="">-- Escolha uma Opção --</option>
+            <option value="/dashboard/current-withdraws">Conta Corrente</option>
+            <option value="/dashboard/saving-withdraws">Conta Poupança</option>
+        </select>
+    </div>
     <h2>Extratos</h2>
     <form action="#" th:action="@{/dashboard/extracts}" method="get" id="extractForm">
         <label for="extractsAccountDropdown">Selecione a conta para extrato:</label>

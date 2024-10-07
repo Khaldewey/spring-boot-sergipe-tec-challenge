@@ -59,5 +59,6 @@ public interface IBankService {
 
   public List<TransactionBank> transactionBySavingAccount(SavingAccount account);
 
-  public void statement();
+  public List<TransactionBank> statement();
+  public List<TransactionBank> statementByType(String type);
 }
