@@ -67,6 +67,8 @@ Este projeto utiliza as seguintes tecnologias:
 
 Remover as exceptions do http que estão na camada de service e lançá-las em uma camada de controle isolada.
 
+Uso do ENUM ao invés de usar uma String 'current' ou 'saving' nos métodos de verificações.
+
 **Analista de Sistemas:** Marília
 
 Colocar um Wrapper adequado na variável que recebe o valor de saldo para que possibilite valores gigantes sem prejudicar o processamento.
