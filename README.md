@@ -61,6 +61,16 @@ Este projeto utiliza as seguintes tecnologias:
 ## UML - Diagramas 
 ![uml_diagram_class](https://github.com/user-attachments/assets/af1b5343-1658-4f7e-8b92-74d943abdf6f)
 
+# Feedback
+## Melhorias a serem adicionadas
+**Analista de Sistemas:** Natanael
+
+Remover as exceptions do http que estão na camada de service e lançá-las em uma camada de controle isolada.
+
+**Analista de Sistemas:** Marília
+
+Colocar um Wrapper adequado na variável que recebe o valor de saldo para que possibilite valores gigantes sem prejudicar o processamento.
+
 
 
 
